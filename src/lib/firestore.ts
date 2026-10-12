@@ -9,6 +9,8 @@ import {
   doc,
   getDoc,
   setDoc,
+  orderBy,
+  limit,
 } from "firebase/firestore";
 
 export const saveFlashcards = async (userId: string, topic: string, data: any) => {
@@ -72,5 +74,44 @@ export const setUserLevel = async (
     ref,
     { level, updatedAt: Timestamp.now() },
     { merge: true },
+  );
+};
+
+// ---- Level test (kiểm tra nâng trình độ) ----
+
+export interface LevelTestResult {
+  id?: string;
+  fromLevel: ProficiencyLevel;
+  testedLevel: ProficiencyLevel;
+  score: number;
+  total: number;
+  passed: boolean;
+  createdAt: Timestamp;
+}
+
+// Lưu ở subcollection users/{uid}/levelTests, không cần index
+export const saveLevelTestResult = async (
+  userId: string,
+  result: Omit<LevelTestResult, "id" | "createdAt">,
+) => {
+  const ref = await addDoc(collection(db, "users", userId, "levelTests"), {
+    ...result,
+    createdAt: Timestamp.now(),
+  });
+  return ref.id;
+};
+
+export const getLevelTestHistory = async (
+  userId: string,
+  max = 10,
+): Promise<LevelTestResult[]> => {
+  const q = query(
+    collection(db, "users", userId, "levelTests"),
+    orderBy("createdAt", "desc"),
+    limit(max),
+  );
+  const snapshot = await getDocs(q);
+  return snapshot.docs.map(
+    (d) => ({ id: d.id, ...d.data() }) as LevelTestResult,
   );
 };

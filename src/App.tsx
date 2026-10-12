@@ -15,6 +15,8 @@ import FlashCardPage from "./pages/home/flashcard/FlashCardPage";
 import FlashcardList from "./pages/home/flashcard/details/FlashcardList";
 import { BreadcrumbProvider } from "./context/BreadcrumbContext";
 import PracticeMenu from "./pages/home/practices/PracticeMenu";
+import Settings from "./pages/home/settings/Settings";
+import LevelTest from "./pages/home/level-test/LevelTest";
 
 function App() {
   return (
@@ -34,6 +36,8 @@ function App() {
                 <Route path="/generator" element={<Generator />} />
                 <Route path="/practice" element={<PracticeMenu />} />
                 <Route path="/flashcard" element={<FlashCardPage />} />
+                <Route path="/settings" element={<Settings />} />
+                <Route path="/level-test" element={<LevelTest />} />
 
                 <Route
                   path="/flashcard/learn/:setId"

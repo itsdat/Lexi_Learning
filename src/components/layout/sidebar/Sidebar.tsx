@@ -9,7 +9,7 @@ const navItems = [
   { to: "/dashboard/create", icon: "school", label: "Tạo bài" },
   { to: "/flashcard", icon: "identity_platform", label: "Flashcard" },
   { to: "/practice", icon: "fit_screen", label: "Luyện tập" },
-  { to: "/dashboard/test", icon: "mail", label: "Test" },
+  { to: "/level-test", icon: "quiz", label: "Kiểm tra" },
   { to: "/settings", icon: "settings", label: "Cài đặt" },
 ];
 
