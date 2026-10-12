@@ -3,6 +3,7 @@ import React from "react";
 import { motion } from "motion/react";
 import { Info, X } from "lucide-react";
 import { cn } from "../../lib/utils";
+import { Card } from "./card";
 
 function CardFlip({
   children,
@@ -91,29 +92,11 @@ function CardFlip({
 }
 
 function CardFlipFront({ className, ...props }: React.ComponentProps<"div">) {
-  return (
-    <div
-      data-slot="card"
-      className={cn(
-        "bg-card text-card-foreground flex flex-col gap-6 rounded-xl border py-6 shadow-xs",
-        className,
-      )}
-      {...props}
-    />
-  );
+  return <Card data-slot="card" className={cn(className)} {...props} />;
 }
 
 function CardFlipBack({ className, ...props }: React.ComponentProps<"div">) {
-  return (
-    <div
-      data-slot="card"
-      className={cn(
-        "bg-card text-card-foreground flex flex-col gap-6 rounded-xl border py-6 shadow-xs",
-        className,
-      )}
-      {...props}
-    />
-  );
+  return <Card data-slot="card" className={cn(className)} {...props} />;
 }
 
 function CardFlipHeader({ className, ...props }: React.ComponentProps<"div">) {

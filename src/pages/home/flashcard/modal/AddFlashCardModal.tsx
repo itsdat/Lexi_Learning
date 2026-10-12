@@ -1,0 +1,129 @@
+import { BaseModal } from "@/components/common/modal/BaseModal";
+import BaseSelect, {
+  type BaseSelectProps,
+} from "@/components/common/select/BaseSelect";
+import { useAuth } from "@/context/AuthContext";
+import { useSaveFlashcards } from "@/hooks/useFlashcards";
+import { generateFlashcards } from "@/lib/ai";
+import { FLASHCARD_TOPICS, type FlashcardTopic } from "@/mocks/topic-data.mock";
+import { goeyToast, gooeyToast } from "goey-toast";
+import { useEffect, useState } from "react";
+
+export default function AddFlashCardModal({
+  onClose,
+  open,
+}: {
+  open: boolean;
+  onClose: () => void;
+}) {
+  const [topicId, setTopicId] = useState<string | undefined>(undefined);
+  const [error, setError] = useState("");
+  const { user, level: defaultLevel } = useAuth();
+  const [isGenerating, setIsGenerating] = useState(false);
+
+  const { mutateAsync: saveFlashcardsMutate, isPending: isSaving } =
+    useSaveFlashcards();
+
+  useEffect(() => {
+    if (error) alert(error);
+  }, [error]);
+
+  const handleGenerateFlashcards = async () => {
+    if (!topicId) {
+      goeyToast.warning("Please select a topic", {
+        description: "Choose a topic before continuing.",
+      });
+      return;
+    }
+
+    setIsGenerating(true);
+
+    const promise = (async () => {
+      const data = await generateFlashcards(
+        topicId,
+        defaultLevel as string,
+        20,
+      );
+
+      await saveFlashcardsMutate({
+        userId: user!.uid,
+        topic: topicId,
+        data,
+      });
+
+      return data;
+    })();
+
+    gooeyToast.promise(promise, {
+      loading: "Generating flashcards...",
+      success: "Flashcards generated successfully!",
+      error: (err) =>
+        err instanceof Error ? err.message : "Failed to generate flashcards.",
+      description: {
+        loading: "Please wait while AI creates your flashcards.",
+        success: "Your flashcards have been saved.",
+        error: "An unexpected error occurred.",
+      },
+      timing: {
+        displayDuration: Infinity,
+      },
+    });
+
+    try {
+      await promise;
+
+      onClose();
+      setTopicId(undefined);
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
+  const TopicCardOption = ({ item }: { item: FlashcardTopic }) => {
+    const Icon = item.icon;
+    return (
+      <div className="w-full">
+        <div className="flex items-center gap-5 rounded-lg py-1 px-0.5">
+          <div className="flex w-14 aspect-square items-center justify-center rounded-md bg-[#fefefe] shadow-xs">
+            <Icon className="size-7 stroke-[1.5]" />
+          </div>
+
+          <div className="min-w-0">
+            <h3 className="truncate text-base">{item.name}</h3>
+            <p className="truncate text-xs text-gray-500">
+              {item.vietnameseName}
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  const topicOptions: BaseSelectProps[] = FLASHCARD_TOPICS.map((item) => ({
+    labelDisplay: <TopicCardOption item={item} />,
+    value: item.name,
+    label: item.name,
+  }));
+
+  return (
+    <>
+      <BaseModal
+        title="Create new flashcard"
+        description="Choose a topic and level — AI will generate your flashcards instantly."
+        open={open}
+        onClose={onClose}
+        submitText="Create"
+        className="max-w-xl!"
+        onSubmit={handleGenerateFlashcards}
+        isLoading={isGenerating || isSaving}
+      >
+        <BaseSelect
+          options={topicOptions}
+          value={topicId}
+          onValueChange={setTopicId}
+          placeholder="Chọn chủ đề học"
+        />
+      </BaseModal>
+    </>
+  );
+}

@@ -2,11 +2,12 @@ import BaseCarousel from "@/components/common/carousel/BaseCarousel";
 import AdminIcon1 from "./icons/benifit_1.svg";
 import AdminIcon2 from "./icons/benifit_2.svg";
 import AdminIcon3 from "./icons/benifit_3.svg";
-import { useState, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import LogoIMG from "@/assets/logo.png";
 import BaseInput from "@/components/common/input/BaseInput";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
+import { gooeyToast } from "@/components/ui/goey-toaster";
 
 interface ISlider {
   label: string;
@@ -73,6 +74,9 @@ export default function Login() {
       } else {
         await login(email, password);
       }
+      gooeyToast.success("Login successful", {
+        description: "You have logged in successfully. Welcome to Lexi!",
+      });
       navigate("/dashboard");
     } catch (err: any) {
       setError(err.message || "Lỗi xác thực");
@@ -80,6 +84,14 @@ export default function Login() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (error) {
+      gooeyToast.error("Login fail", {
+        description: `${error}`,
+      });
+    }
+  }, [error]);
 
   return (
     <div className="relative min-h-screen w-full flex items-center justify-center bg-[#1a1c1e] overflow-hidden">
@@ -172,7 +184,7 @@ export default function Login() {
               </label>
             )}
 
-            {error && <p className="text-red-500 text-sm">{error}</p>}
+            {/* {error && <p className="text-red-500 text-sm">{error}</p>} */}
 
             <div className="flex flex-col gap-5">
               <button
@@ -180,11 +192,7 @@ export default function Login() {
                 disabled={loading}
                 className="w-full rounded-[3px] bg-primary text-white py-2 font-medium text-lg cursor-pointer disabled:opacity-60"
               >
-                {loading
-                  ? "Processing..."
-                  : isSignup
-                  ? "Sign Up"
-                  : "Log In"}
+                {loading ? "Processing..." : isSignup ? "Sign Up" : "Log In"}
               </button>
             </div>
           </form>

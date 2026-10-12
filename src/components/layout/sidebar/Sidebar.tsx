@@ -2,11 +2,12 @@ import { NavLink, Outlet } from "react-router-dom";
 import LogoIMG from "@/assets/logo.png";
 import { useAuth } from "@/context/AuthContext"; // chỉnh path nếu khác
 import { useNavigate } from "react-router-dom";
+import AppBreadcrumb from "@/components/common/breadcrumb/AppBreadcrumb";
 
 const navItems = [
   { to: "/dashboard", icon: "home", label: "Trang chủ" },
   { to: "/dashboard/create", icon: "school", label: "Tạo bài" },
-  { to: "/dashboard/learn", icon: "identity_platform", label: "Flashcard" },
+  { to: "/flashcard", icon: "identity_platform", label: "Flashcard" },
   { to: "/practice", icon: "fit_screen", label: "Luyện tập" },
   { to: "/dashboard/test", icon: "mail", label: "Test" },
   { to: "/settings", icon: "settings", label: "Cài đặt" },
@@ -22,7 +23,7 @@ export default function Sidebar() {
   };
 
   return (
-    <div className="w-full flex h-screen">
+    <div className="w-full flex h-screen bg-[#F4F4F4]">
       {/* Sidebar */}
       <div className="group/sidebar w-16 md:w-18 hover:w-52 h-[calc(100vh-1rem)] my-auto rounded-lg ml-2 bg-black flex flex-col items-center py-6 gap-1 shrink-0 overflow-hidden transition-[width] delay-200 duration-300 ease-out">
         <img
@@ -80,8 +81,18 @@ export default function Sidebar() {
       </div>
 
       {/* Content */}
-      <div className="pl-3 flex-1 h-full overflow-y-auto w-full bg-[#fbf8ff] py-5">
-        <div className="w-full max-w-7xl mx-auto">
+      <div className="pl-3 flex-1 h-full overflow-y-auto w-full  py-5 relative z-0">
+        <div className="absolute top-0 left-20 text-[200px] font-semibold text-zinc-200/40 select-none">
+          LEARN
+        </div>
+        <div className="absolute top-1/2 -translate-y-1/2 right-20 text-[200px] font-semibold text-zinc-200/40 select-none">
+          WITH
+        </div>
+        <div className="absolute bottom-0 left-20 text-[200px] font-semibold text-zinc-200/40 select-none">
+          LEXI
+        </div>
+        <div className="w-full max-w-7xl mx-auto z-1 relative">
+          <AppBreadcrumb />
           <Outlet />
         </div>
       </div>

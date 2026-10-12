@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import Generator from "@/components/feature/Generator";
-import FlashcardList from "@/components/feature/FlashcardList";
+import FlashcardList from "@/pages/home/flashcard/details/FlashcardList";
 import TestList from "@/components/feature/TestList";
 import { useAuth } from "@/context/AuthContext";
 

@@ -8,6 +8,7 @@ import {
   CardHeader,
   CardTitle,
 } from "../../../components/ui/card";
+import { usePronunciation } from "@/hooks/usePronunciation";
 
 interface Exercise {
   id: number;
@@ -37,7 +38,7 @@ export default function ListeningPractice({
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [submitted, setSubmitted] = useState(false);
   const [correctCount, setCorrectCount] = useState(0);
-  const [isPlaying, setIsPlaying] = useState(false);
+  const { speak, loading: speakingLoading } = usePronunciation();
 
   useEffect(() => {
     const loadExercises = async () => {
@@ -79,9 +80,7 @@ export default function ListeningPractice({
   const isCorrect = selectedAnswer === currentExercise.correct_answer;
 
   const handlePlayAudio = () => {
-    setIsPlaying(true);
-    speak(currentExercise.audio_text, "en-US");
-    setTimeout(() => setIsPlaying(false), 2000);
+    speak(currentExercise.audio_text);
   };
 
   const handleSubmit = () => {
@@ -128,11 +127,11 @@ export default function ListeningPractice({
           {/* Play Audio Button */}
           <Button
             onClick={handlePlayAudio}
-            disabled={isPlaying || submitted}
+            disabled={speakingLoading || submitted}
             size="lg"
             className="w-full bg-blue-600 hover:bg-blue-700 h-16"
           >
-            {isPlaying ? "🔊 Đang phát..." : "▶️ Nghe đoạn âm thanh"}
+            {speakingLoading ? "🔊 Đang phát..." : "▶️ Nghe đoạn âm thanh"}
           </Button>
 
           {/* Question */}
